@@ -11,8 +11,39 @@ class App extends Component {
 
 
   render() {
+    console.log('people', this.props.people);
+    if (!this.props.people.length) {
+      return <div>Loading...</div>
+    }
     return (
-      <div>React simple starter</div>
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Height</th>
+            <th>Mass</th>
+            <th>Vehicles</th>
+            <th>Homeworld</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.people.map((person, i) => {
+            return (
+              <tr key={i}>
+                <th scope="row">{i + 1}</th>
+                <td>{person.name}</td>
+                <td>{person.gender}</td>
+                <td>{person.height}</td>
+                <td>{person.mass}</td>
+                <td>{person.vehicles.length}</td>
+                <td>{person.homeworld.length}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     );
   }
 }

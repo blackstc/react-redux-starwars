@@ -6,21 +6,32 @@ import {
 
 
 export function fetchPeople() {
-  let query = `${ROOT_URL}/people`;
-  const payload = axios.get(query);
-  //const request = (query) => {
-  //  return axios.get(query);
-  //};
-  //
-  //  request(query)
-  //    .then(res => {
-  //      payload.push(res.data.results);
-  //      query = res.data.next;
-  //    })
+  let payload = [];
+  let query = `${ROOT_URL}/people/`;
+  let sequence = Promise.resolve();
+  let promise;
+  let dispatchPointer;
 
+  return promise = (dispatch) => {
+    if (dispatch !== undefined) {
+      dispatchPointer = dispatch
+    }
 
-  return {
-    type: FETCH_PEOPLE,
-    payload
-  }
+    sequence = sequence.then(() => {
+      return axios.get(query)
+    }).then(res => {
+      payload = payload.concat(res.data.results);
+      query = res.data.next;
+
+      if (query !== null) {
+        promise();
+      } else {
+          dispatchPointer({
+            type: FETCH_PEOPLE,
+            payload
+          });
+        }
+    }).catch(err => console.log('Error loading' + err))
+
+  };
 }
