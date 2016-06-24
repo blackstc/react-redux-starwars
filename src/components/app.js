@@ -5,16 +5,39 @@ import * as actions from '../actions';
 import { connect } from 'react-redux';
 
 class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      pageNum: 0
+    }
+    this.onNextClick = this.onNextClick.bind(this);
+    this.onPreviousClick = this.onPreviousClick.bind(this);
+  }
+
   componentWillMount() {
     this.props.fetchPeople();
   }
 
+  onNextClick() {
+    if (this.props.next) {
+      this.setState({ pageNum: this.state.pageNum + 10 })
+      this.props.fetchPeople(this.props.next);
+    }
+  }
+
+  onPreviousClick() {
+    if (this.props.previous) {
+      this.setState({ pageNum: this.state.pageNum - 10 })
+      this.props.fetchPeople(this.props.previous);
+    }
+  }
 
   render() {
-    console.log('people', this.props.people);
-    if (!this.props.people) {
+    if (!this.props.people.length) {
       return <div>Loading...</div>
     }
+    console.log(this.props);
     return (
       <div>
         <table className="table table-striped">
@@ -33,7 +56,7 @@ class App extends Component {
             {this.props.people.map((person, i) => {
                 return (
                 <tr key={i}>
-                  <th scope="row">{i + 1}</th>
+                  <th scope="row">{this.state.pageNum + i + 1}</th>
                   <td>{person.name}</td>
                   <td>{person.gender}</td>
                   <td>{person.height}</td>
@@ -45,15 +68,32 @@ class App extends Component {
             })}
           </tbody>
         </table>
-        <button type="button" className="btn btn-Primary">Previous Page</button>
-        <button type="button" className="btn btn-primary">Next Page</button>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={this.onPreviousClick}
+          >
+          Previous Page
+        </button>
+        <button
+          type="button"
+          style={{ margin: '10px' }}
+          className="btn btn-primary"
+          onClick={this.onNextClick}
+          >
+          Next Page
+        </button>
       </div>
     )
   }
 }
 
 function mapStateToProps(state) {
-  return { people: state.people.all }
+  return {
+    next: state.people.next,
+    people: state.people.all,
+    previous: state.people.previous
+  }
 }
 
 export default connect(mapStateToProps, actions)(App)

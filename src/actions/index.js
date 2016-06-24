@@ -5,8 +5,8 @@ import {
 } from './types';
 
 
-export function fetchPeople() {
-  let query = `${ROOT_URL}/people`;
+export function fetchPeople(url = `${ROOT_URL}/people`) {
+  let query = url;
   const payload = axios.get(query);
 
   return {
